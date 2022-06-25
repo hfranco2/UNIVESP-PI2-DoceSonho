@@ -31,6 +31,7 @@ urlpatterns = [
     path('listQuitute/', Portfolio.listQuitute),
     path('listCategoria/', Portfolio.listCategoria),
     path('',include('frontend.urls')),
+    path('cart/',include('frontend.urls')),
     
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
