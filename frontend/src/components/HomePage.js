@@ -4,8 +4,9 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
+import { CssBaseline, AppBar, Toolbar, IconButton} from "@material-ui/core";
 import { Grid } from "@material-ui/core";
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, createTheme } from '@material-ui/core/styles';
 import { green, pink } from '@material-ui/core/colors';
 import Instagram from '@material-ui/icons/Instagram';
 import FilterListIcon from '@material-ui/icons/FilterList';
@@ -18,11 +19,34 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-
+import MenuIcon from '@material-ui/icons/Menu';
 const useStyles = theme => ({
   root: {
     flexGrow: 0,
+	background:'#C4C4C4',
+	height:'100vh',
+	padding:theme.spacing(2)
   },
+  color:{
+	primary:{
+		main: '#F7D2DA',
+	},
+	secondary:{
+	main:'#57160A'
+	},
+	white:{
+		main:'#ffffff',
+	},
+	grey:{
+		main:'#C4C4C4'
+	}	
+},
+menuTop:{
+ background:'#F7D2DA',
+},
+space:{
+ flexGrow:1
+},
   menuButton: {
     marginRight: theme.spacing(2),
   },
@@ -35,16 +59,33 @@ const useStyles = theme => ({
   header: {
       padding: '0 0 8px 0 !important',
       backgroundColor: 'rgba(255, 255, 255, 0.6)',
-      maxHeight:'1em'
+     
   },
   header_card: {
-      backgroundColor: 'rgba(255, 255, 255, 0.05)'
-
-  },
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    height:'100%'
+}, 
+ header_cart: {
+  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  width:'2em',
+  height:'2.4em',
+},
+  title: {
+ color:'#57160A',
+ height:'50%',
+},
   header_child: {
-      padding:'0px',
-      margin:'0px'
-  },
+    padding:'0px',
+    margin:'0px',
+    height:'10vh',
+},  
+header_child1: {
+  padding:'0px',
+  margin:'0px',
+  backgroundColor:'#F7D2DA',
+  height:'10vh',
+  width:'100%',
+},
   filter_container: {
     marginTop:'8px',
     marginBottom:'8px'
@@ -53,6 +94,7 @@ const useStyles = theme => ({
     justifyContent:'center',
     display:'flex'
   }
+  
 });
 
 class HomePage extends Component {
@@ -184,146 +226,36 @@ class HomePage extends Component {
   } 
 
     render() {
-      const { classes } = this.props;
-      let InstagramColorButton = withStyles((theme) => ({
-        root: {
-          color: '#FFFFFF',
-          backgroundColor: '#E4405F',
-          '&:hover': {
-            backgroundColor: pink[300],
-          },
-        },
-      }))(Button);
-      
-    let WhatsAppColorButton = withStyles((theme) => ({
-        root: {
-          color: '#FFFFFF',
-          backgroundColor: '#25D366',
-          '&:hover': {
-            backgroundColor: green[300],
-          },
-        },
-      }))(Button);
-
+      const { classes } = this.props;		
      return (
-        <div >
-        <Grid container className={classes.root}  spacing={2} justify="center">
-            <Grid item xs={12} className={classes.header}>
-                <Grid 
-                container 
-                direction="row"
-                alignItems="center" 
-                spacing={0}
-                >
-                    <Grid item ms={6} className={classes.header_child}>
-                        <Card square={true} elevation={0} className={classes.header_card}>  
-                            <CardMedia
-                            component="img"
-                            alt=""
-                            image="../static/images/logo.png"
-                            title=""
-                            className={classes.header_card}
-                            />
-                        </Card>
-                    </Grid>
-                    <Grid item ms={6} className={classes.header_child}  >
-                        <Card square={true} elevation={0} className={classes.header_card} >  
-                            <CardContent className={classes.header_card}>
-                                <Typography gutterBottom variant="h2" component="h2">
-                                Confeitaria Doce Sonho
-                                </Typography>
-                                <Typography gutterBottom variant="h5" color="textSecondary" component="h2">
-                                Trabalhamos com chocolate e muito amor em todas as épocas do ano!
-                                </Typography>
-                                <Grid
-                                container
-                                direction="row"
-                                justifyContent="flex-start"
-                                alignItems="center"
-                                spacing={2}>
-                                    <Grid item>
-                                    <InstagramColorButton
-                                        variant="outlined"
-                                        color="primary"
-                                        startIcon={<Instagram />}
-                                        onClick={() => this.goToInstagram()}
-                                    >
-                                        Instagram
-                                    </InstagramColorButton>
-                                    </Grid>
-                                    <Grid item>
-                                    </Grid>
-                                    <Grid item>
-                                    <WhatsAppColorButton
-                                        variant="outlined"
-                                        color="primary"
-                                        startIcon={<WhatsApp />}
-                                        onClick={() => this.goToWhatsApp()}
-                                    >
-                                        WhatsApp
-                                    </WhatsAppColorButton>
-                                    </Grid>
-                                </Grid>
-                            </CardContent>
-                            
-                        </Card>
-                    </Grid>
-                </Grid>
-            </Grid>
-            <Grid item xs={10} className={classes.filter_container}>
-              <Button variant="contained" color="primary" startIcon={<FilterListIcon />} onClick={() => this.dialogOpen()}>
-                Filtrar
-              </Button>
-              <Dialog onClose={() => this.dialogHandleClose()} aria-labelledby="simple-dialog-title" open={this.state.dialogOpen}>
-                <DialogTitle id="simple-dialog-title">Filtros</DialogTitle>
-                <List>
-                { this.state.listCategory.map((item) => (
-                  <ListItem key={item} role={undefined} dense button onClick={() => this.handleToggle(item)}>
-                    <ListItemIcon>
-                      <Checkbox
-                        edge="start"
-                        tabIndex={-1}
-                        checked={this.state.checked.indexOf(item) !== -1}
-                        disableRipple
-                        inputProps={{ 'aria-labelledby': `checkbox-list-label-${item.id}` }}
-                      />
-                      {/*  */}
-                    </ListItemIcon>
-                    <ListItemText id={item.id} primary={item.description} />
-                  </ListItem>
-                ))}
-                </List>
-              </Dialog>
-            </Grid>
-            <Grid item xs={10}>
-                <Grid container justify="center" spacing={2}>
-                { this.state.listBolo.map((item) => (
-                    <Grid item>
-                        <Card className={classes.card}>
-                            <CardActionArea onClick={() => showAlert(item.title) }>
-                                <CardMedia
-                                component="img"
-                                alt={item.description}
-                                height="300"
-                                image={"../static/" + item.image}
-                                title={item.title}
-                                />
-                                <CardContent>
-                                    <Typography gutterBottom variant="h5" component="h2">
-                                        {item.title}
-                                    </Typography>
-                                    <Typography variant="body2" color="textSecondary" component="p">
-                                        {item.description}
-                                    </Typography>
-                                </CardContent>
-                            </CardActionArea>
-                        </Card>
-                    </Grid>
-                ))}
-                </Grid>
-            </Grid>
-        </Grid>
-        </div>
+      <CssBaseline>	
+			<div className={classes.root}>
+				<AppBar className={classes.menuTop}>
+					<Toolbar>
+						<IconButton 
+						edge='start'
+						className="menuButton"
+            color="inherit"
+            aria-label="menu"
+						/>
+		
+						<Typography variant="h4" className={classes.title}>
+            Confeitaria Doce Sonho
+						</Typography>
+            <div className={classes.space}/>
+						<Button color='inherit'>
+            <CardMedia
+            component="svg"
+            alt=""
+            image="../static/images/sacola.svg"
+            title=""
+            className={classes.header_cart}
+             />
+						</Button>
+					</Toolbar>
+				</AppBar>
+			</div>		
+      </CssBaseline>
      );
     }
   
