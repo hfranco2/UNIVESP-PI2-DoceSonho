@@ -107,7 +107,7 @@ class Cart extends Component {
   };
 
   async loadQuitute(category = ""){
-    var uri = '/listQuitute?category='
+    var uri =  '/listProdutos?category='
     if(category){
       uri = uri + category
     }

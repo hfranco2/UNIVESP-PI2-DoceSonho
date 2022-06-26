@@ -4,7 +4,17 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import { CssBaseline, AppBar, Toolbar, IconButton} from "@material-ui/core";
+import { CssBaseline, 
+  AppBar, 
+  Toolbar, 
+  IconButton,
+  Box,
+  Drawer,
+  Divider,
+  Hidden,
+  Switch,
+  ListSubheader,
+ } from "@material-ui/core";
 import { Grid } from "@material-ui/core";
 import { withStyles, createTheme } from '@material-ui/core/styles';
 import { green, pink } from '@material-ui/core/colors';
@@ -19,12 +29,21 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import MenuIcon from '@material-ui/icons/Menu';
+import ListItemButton from '@material-ui/core/ListItemText';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import MailIcon from '@material-ui/icons/Mail';
+import HomeIcon from '@material-ui/icons/Home';
+import Subscriptions from '@material-ui/icons/Subscriptions';
+import Whatshot from '@material-ui/icons/Whatshot';
+import VideoLibrary from '@material-ui/icons/VideoLibrary';
+import History from '@material-ui/icons/History';
+import AddCircle from '@material-ui/icons/AddCircle';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 const useStyles = theme => ({
   root: {
     flexGrow: 0,
 	background:'#C4C4C4',
-	height:'100vh',
+	height:'100%',
 	padding:theme.spacing(2)
   },
   color:{
@@ -43,6 +62,7 @@ const useStyles = theme => ({
 },
 menuTop:{
  background:'#F7D2DA',
+ zIndex: theme.zIndex.drawer + 1,
 },
 space:{
  flexGrow:1
@@ -54,11 +74,13 @@ space:{
     flexGrow: 1,
   },
   card: {
-    maxWidth: 350
+    maxWidth: 350,
+    height:'500px'
   },
   header: {
       padding: '0 0 8px 0 !important',
       backgroundColor: 'rgba(255, 255, 255, 0.6)',
+
      
   },
   header_card: {
@@ -93,6 +115,60 @@ header_child1: {
   categories_button: {
     justifyContent:'center',
     display:'flex'
+  },
+  drawer:{
+    width: 240,
+    flexShrink: 0,
+  }, 
+  appBar: {
+    boxShadow: 'none',
+    zIndex: theme.zIndex.drawer + 1,
+  },
+  logo: {
+    height: 25,
+  },
+  drawer: {
+    width: '20%',
+    flexShrink: 0,
+  },
+  drawerPaper: {
+    width: '20%',
+    borderRight: 'none',
+  },
+  menuIcon: {
+    paddingRight: theme.spacing(5),
+    paddingLeft: theme.spacing(6),
+  },
+  icons: {
+    paddingRight: theme.spacing(5),
+  },
+  grow: {
+    flexGrow: 1,
+  },
+  listItemText: {
+    fontSize: 14,
+  },
+  listItem: {
+    paddingTop: 4,
+    paddingBottom: 4,
+  },
+  subheader: {
+    textTransform: 'uppercase',
+  },
+  bottomMenu:{
+    background:"#ffffff",
+    height:'4.5em',
+    width:'100vw',
+    display:'flex',
+    justifyContent:'center',
+    alignItems:'center'
+  },
+  sideLogo:{
+    width:'100%',
+    borderRadius:'30px'
+  },
+  categoryNames:{
+    
   }
   
 });
@@ -101,16 +177,16 @@ class HomePage extends Component {
 
   state = {
     searchNodes: "",
-    listBolo: [],
-    listCategory: [],
+    listItem: [],
+   listCategoria: [],
     checked: [],
     dialogOpen: false
   };
 
-  constructor(props) {   
+  constructor(props) {
     super(props);
 
-    this.loadQuitute()
+    this.loadItem()
     this.loadCategory()
     
   }
@@ -133,10 +209,10 @@ class HomePage extends Component {
     }
 
     if(newChecked.length > 1 || (newChecked.length == 1 && newChecked[0].id != -1)) {
-      this.loadQuitute(newChecked.map((item) => item.id).join())
+      this.loadItem(newChecked.map((item) => item.id).join())
     } else {
       newChecked = []
-      this.loadQuitute()
+      this.loadItem()
     }
 
     this.setState({
@@ -148,8 +224,8 @@ class HomePage extends Component {
     });
   };
 
-  async loadQuitute(category = ""){
-    var uri = '/listQuitute?category='
+  async loadItem(category = ""){
+    var uri = '/listProdutos?category='
     if(category){
       uri = uri + category
     }
@@ -158,7 +234,7 @@ class HomePage extends Component {
           response.json()
     ).then((data) => {
       this.setState({
-        listBolo: data.map(
+        listItem: data.map(
           (item) => ( {
             title:item.titulo,
             description:item.descricao,
@@ -175,7 +251,7 @@ class HomePage extends Component {
           response.json()
     ).then((data) => {
       this.setState({
-        listCategory: [
+       listCategoria: [
           {
             id:-1,
             description:"Todos",
@@ -191,46 +267,56 @@ class HomePage extends Component {
       })
       
     }); 
-  }
-           
-  
+  }       
   showAlert = (description) => {
     alert(description);
   }
-
-  
-
   goToAnotherUrl = (url) => {
     window.open(url, '_blank').focus();
   }
-
   goToWhatsApp = () => {
     this.goToAnotherUrl("https://api.whatsapp.com/send?phone=5511985935897&text=Estou%20contatando%20pelo%20site%20para%20saber%20mais%20sobre...");
   }
-
   goToInstagram = () => {
     this.goToAnotherUrl("https://www.instagram.com/confeitariadocesonho2106/");
   }
-
   dialogOpen = () => {
     this.setState({
       dialogOpen: true
     });
   }
-
   dialogHandleClose = () => {
     this.setState({
       dialogOpen: false
     });
-
   } 
-
     render() {
       const { classes } = this.props;		
+      let InstagramColorButton = withStyles((theme) => ({
+        root: {
+          color: '#FFFFFF',
+          backgroundColor: '#E4405F',
+          '&:hover': {
+            backgroundColor: pink[300],
+          },
+        },
+      }))(Button);
+      
+    let WhatsAppColorButton = withStyles((theme) => ({
+        root: {
+          color: '#FFFFFF',
+          backgroundColor: '#25D366',
+          '&:hover': {
+            backgroundColor: green[300],
+          },
+        },
+      }))(Button);
+
      return (
-      <CssBaseline>	
+     
+      <CssBaseline>
 			<div className={classes.root}>
-				<AppBar className={classes.menuTop}>
+				<AppBar className={classes.menuTop}>      
 					<Toolbar>
 						<IconButton 
 						edge='start'
@@ -238,7 +324,6 @@ class HomePage extends Component {
             color="inherit"
             aria-label="menu"
 						/>
-		
 						<Typography variant="h4" className={classes.title}>
             Confeitaria Doce Sonho
 						</Typography>
@@ -253,12 +338,124 @@ class HomePage extends Component {
              />
 						</Button>
 					</Toolbar>
+          <Grid
+          className={classes.bottomMenu}
+          >
+                
+               <Grid
+                                container
+                                direction="row"
+                                justifyContent="center"
+                                alignItems="center"
+                                spacing={2}>
+                                 
+                                    <Grid item>                              
+                                    <InstagramColorButton
+                                        variant="outlined"
+                                        color="primary"
+                                        startIcon={<Instagram />}
+                                        
+                                        onClick={() => this.goToInstagram()}
+                                    >
+                                        Instagram
+                                    </InstagramColorButton>
+                                    </Grid>
+                                    <Grid item>
+                                    </Grid>
+                                    <Grid item>
+                                    <WhatsAppColorButton
+                                        variant="outlined"
+                                        color="primary"
+                                        startIcon={<WhatsApp />}
+                                        onClick={() => this.goToWhatsApp()}
+                                    >
+                                        WhatsApp
+                                    </WhatsAppColorButton>
+                                    </Grid>
+                                </Grid>
+          </Grid>
 				</AppBar>
-			</div>		
-      </CssBaseline>
-     );
-    }
-  
-}
+        <Box display='flex'>          
+        <Hidden smDown>
+          <Drawer
+            className={classes.drawer}
+            variant='permanent'
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+          >
+            <Toolbar />
+            <Toolbar />            
+            <div className={classes.drawerContainer}>             
+              <Box p={2}>            
+                            <CardMedia
+                            component="img"
+                            alt=""
+                            image="../static/images/logo.png"
+                            title=""
+                            className={classes.sideLogo}
+                            />
+              
+              </Box>
+              <Divider />       
+              { this.state.listCategoria.map((item,index) => ( 
+              <ListItem  key={index} onClick={() => this.state.checked.indexOf(item) !== -1}>                         
+                <ListItemText >
+                <Typography align='center' >
+                {item.description}
+						</Typography>                
+                  </ListItemText>
+              </ListItem>
+                        ))}
+              <Divider />
+            </div>
+          </Drawer>
+          <Toolbar />
+        </Hidden>     
+         
+    
+        <Box p={8}>
+          <Typography
+            variant='h5'
+            color='textPrimary'
+            style={{ fontWeight: 600 }}
+          >
+            
+            <Toolbar />
+            Recomendados
+          </Typography>
 
+          <Grid container spacing={4}>
+          { this.state.listItem.map((item,index) => (
+              <Grid item lg={3} md={4} sm={6} xs={12} key={index}>
+                  
+                        <Card className={classes.card}>
+                            <CardActionArea onClick={() => showAlert(item.title) }>
+                                <CardMedia
+                                component="img"
+                                alt={item.description}
+                                height="300"
+                                image={"../static/" + item.image}
+                                title={item.title}
+                                />
+                                <CardContent>
+                                    <Typography gutterBottom variant="h5" component="h2">
+                                        {item.title}
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary" component="p">
+                                        {item.description}
+                                    </Typography>
+                                </CardContent>
+                            </CardActionArea>
+                        </Card>
+                    </Grid>
+            ))}
+          </Grid>
+        </Box>
+        </Box>
+			</div>	
+          </CssBaseline>
+     );
+    }  
+}
 export default withStyles(useStyles, { withTheme: true })(HomePage);
