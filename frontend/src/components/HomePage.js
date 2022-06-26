@@ -74,8 +74,7 @@ space:{
     flexGrow: 1,
   },
   card: {
-    maxWidth: 350,
-    height:'500px'
+    maxWidth: 350,    
   },
   header: {
       padding: '0 0 8px 0 !important',
@@ -167,8 +166,22 @@ header_child1: {
     width:'100%',
     borderRadius:'30px'
   },
-  categoryNames:{
-    
+  cardButton:{
+    minHeight: 500,
+    display:'flex',
+    flexDirection:'column',
+    justifyContent:'space-between'
+  
+  },
+  cardImg:{
+    maxHeight:350,
+    width:'100%'
+  },
+  cardText:{
+    height:'200px',
+    display:'flex',
+    flexDirection:'column',
+    textAlign:'center'
   }
   
 });
@@ -191,40 +204,15 @@ class HomePage extends Component {
     
   }
 
-  handleToggle(value) {
-    const currentIndex = this.state.checked.indexOf(value);
-    let newChecked = [...this.state.checked];
-    
-    if(value.id == -1) {
-      if (currentIndex === -1) {
-        newChecked = this.state.listCategory
-      } else {
-        newChecked = []
-      }
-    }
-    else if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    if(newChecked.length > 1 || (newChecked.length == 1 && newChecked[0].id != -1)) {
-      this.loadItem(newChecked.map((item) => item.id).join())
-    } else {
-      newChecked = []
+  handleToggle(value) {    
+    let newChecked = [value];
+    if(newChecked==-1){
       this.loadItem()
-    }
-
-    this.setState({
-      checked: newChecked
-    });
-
-    this.setState({
-      dialogOpen: false
-    });
+    }else
+      this.loadItem(newChecked.map((item) => item.id).join())
   };
 
-  async loadItem(category = ""){
+  async loadItem(category){
     var uri = '/listProdutos?category='
     if(category){
       uri = uri + category
@@ -244,7 +232,30 @@ class HomePage extends Component {
       })
     });
   }
-  
+  async loadItemByCategory(category){
+    var uri = '/listProdutos'
+    fetch(uri)
+    .then((response) =>
+          response.json()
+    ).then((data) => {
+      this.setState({
+        
+        listItemCategory: data.filter((value)=>{
+          console.log(value.categoria_id)
+          return value.categoria_id=category 
+        }),
+        
+        listItem:    istItemCategory.map(
+          (item) => ( {
+            title:item.titulo,
+            description:item.descricao,
+            image:item.foto
+          } )
+        )
+      })
+    });
+  }
+
   async loadCategory() {
     fetch('/listCategoria')
     .then((response) =>
@@ -311,7 +322,7 @@ class HomePage extends Component {
           },
         },
       }))(Button);
-
+      
      return (
      
       <CssBaseline>
@@ -399,34 +410,40 @@ class HomePage extends Component {
               </Box>
               <Divider />       
               { this.state.listCategoria.map((item,index) => ( 
-              <ListItem  key={index} onClick={() => this.state.checked.indexOf(item) !== -1}>                         
+                 <CardActionArea  key={index}  onClick={() => this.state.checked.indexOf(item) !== -1} >
+              <ListItem >                         
                 <ListItemText >
                 <Typography align='center' >
                 {item.description}
 						</Typography>                
                   </ListItemText>
               </ListItem>
+              </CardActionArea>
                         ))}
               <Divider />
             </div>
           </Drawer>
           <Toolbar />
+          
         </Hidden>     
          
     
         <Box p={8}>
-          <Typography
-            variant='h5'
-            color='textPrimary'
-            style={{ fontWeight: 600 }}
-          >
-            
-            <Toolbar />
-            Recomendados
-          </Typography>
-
+        <Toolbar />
           <Grid container spacing={4}>
-          { this.state.listItem.map((item,index) => (
+          { this.state.listCategoriaById.map((item,index) => (         
+            <Box width='100%'>
+               <Typography
+            variant='h5'
+            color='inherit'
+            style={{ fontWeight: 600 }}
+            align="center"
+          >            
+            <Toolbar />
+            {item.description}
+          </Typography>    
+       
+          {/* { this.state.listItem.map((item,index) => (
               <Grid item lg={3} md={4} sm={6} xs={12} key={index}>
                   
                         <Card className={classes.card}>
@@ -448,8 +465,10 @@ class HomePage extends Component {
                                 </CardContent>
                             </CardActionArea>
                         </Card>
-                    </Grid>
-            ))}
+                    </Grid>  
+                      ))}         */}
+                        </Box> 
+                        ))}            
           </Grid>
         </Box>
         </Box>
