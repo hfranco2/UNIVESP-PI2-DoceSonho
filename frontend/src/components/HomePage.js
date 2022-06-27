@@ -40,7 +40,9 @@ import VideoLibrary from "@material-ui/icons/VideoLibrary";
 import History from "@material-ui/icons/History";
 import AddCircle from "@material-ui/icons/AddCircle";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import MenuIcon from '@material-ui/icons/Menu';
 
+const drawerWidth = 340;
 const useStyles = (theme) => ({
     root: {
         flexGrow: 0,
@@ -63,12 +65,8 @@ const useStyles = (theme) => ({
         },
     },
     menuTop: {
-      [theme.breakpoints.up('sm')]: {
-        
-        marginLeft: 400,
-        background: "#F7D2DA",
-        width:'100%',
-      },   
+      zIndex: theme.zIndex.drawer + 1,
+      background: "#F7D2DA",
     },
     space: {
         flexGrow: 1,
@@ -119,10 +117,6 @@ const useStyles = (theme) => ({
         justifyContent: "center",
         display: "flex",
     },
-    drawer: {
-        width: 240,
-        flexShrink: 0,
-    },
     appBar: {
         boxShadow: "none",
         zIndex: theme.zIndex.drawer + 1,
@@ -135,8 +129,8 @@ const useStyles = (theme) => ({
         flexShrink: 0,
     },
     drawerPaper: {
-        width: "20%",
-        borderRight: "none",
+      width: drawerWidth,
+      borderRight: "none",
     },
     menuIcon: {
         paddingRight: theme.spacing(5),
@@ -192,7 +186,13 @@ const useStyles = (theme) => ({
             display: "none",
         },
     },
-    toolbar: theme.mixins.toolbar,
+    menuHamburgerButton: {
+      marginRight: theme.spacing(2),
+      [theme.breakpoints.up('sm')]: {
+      display: 'none',
+      },
+  },
+  toolbar: theme.mixins.toolbar,
 });
 
 class HomePage extends Component {
@@ -202,6 +202,7 @@ class HomePage extends Component {
         listCategoria: [],
         checked: [],
         dialogOpen: false,
+        mobileOpen: false,
     };
 
     constructor(props) {
@@ -377,12 +378,14 @@ class HomePage extends Component {
                   <CssBaseline/>
                     <AppBar position="fixed" className={classes.menuTop}>
                         <Toolbar>
+
                             <IconButton
                                 edge="start"
                                 className="menuButton"
                                 color="inherit"
                                 aria-label="menu"
                             />
+                            
                             <Typography variant="h4" className={classes.title}>
                                 Confeitaria Doce Sonho
                             </Typography>
@@ -398,13 +401,6 @@ class HomePage extends Component {
                             </Button>
                         </Toolbar>
                         <Grid className={classes.bottomMenu}>
-                            <IconButton
-                                color="inherit"
-                                aria-label="open drawer"
-                                edge="start"
-                                // onClick={handleDrawerToggle}
-                                className={classes.menuButton}
-                            ></IconButton>
                             <Grid
                                 container
                                 direction="row"
@@ -436,53 +432,54 @@ class HomePage extends Component {
                             </Grid>
                         </Grid>
                     </AppBar>
-                    <Box display="flex">
-                        <Hidden smDown>
-                            <Drawer
-                                className={classes.drawer}
-                                variant="permanent"
-                                classes={{
-                                    paper: classes.drawerPaper,
-                                }}
-                            >
-                                <Toolbar />
-                                <Toolbar />
-                                <div className={classes.drawerContainer}>
-                                    <Box p={2}>
-                                        <CardMedia
-                                            component="img"
-                                            alt=""
-                                            image="../static/images/logo.png"
-                                            title=""
-                                            className={classes.sideLogo}
-                                        />
-                                    </Box>
-                                    <Divider />
-                                    {this.state.listCategoria.map(
-                                        (item, index) => (
-                                            <CardActionArea
-                                                key={index}
-                                                onClick={() =>
-                                                    this.state.checked.indexOf(
-                                                        item
-                                                    ) !== -1
-                                                }
-                                            >
-                                                <ListItem>
-                                                    <ListItemText>
-                                                        <Typography align="center">
-                                                            {item.description}
-                                                        </Typography>
-                                                    </ListItemText>
-                                                </ListItem>
-                                            </CardActionArea>
-                                        )
-                                    )}
-                                    <Divider />
-                                </div>
-                            </Drawer>
-                            <Toolbar />
-                        </Hidden>
+                    
+                    <Hidden smDown>
+                        <Drawer
+                            className={classes.drawer}
+                            variant="permanent"
+                            classes={{
+                                paper: classes.drawerPaper,
+                            }}
+                        >
+                            <div className={classes.toolbar} />
+                            <div className={classes.toolbar} />
+                            <div className={classes.drawerContainer}>
+                                <Box p={2}>
+                                    <CardMedia
+                                        component="img"
+                                        alt=""
+                                        image="../static/images/logo.png"
+                                        title=""
+                                        className={classes.sideLogo}
+                                    />
+                                </Box>
+                                <Divider />
+                                {this.state.listCategoria.map(
+                                    (item, index) => (
+                                        <CardActionArea
+                                            key={index}
+                                            onClick={() =>
+                                                this.state.checked.indexOf(
+                                                    item
+                                                ) !== -1
+                                            }
+                                        >
+                                            <ListItem>
+                                                <ListItemText>
+                                                    <Typography align="center">
+                                                        {item.description}
+                                                    </Typography>
+                                                </ListItemText>
+                                            </ListItem>
+                                        </CardActionArea>
+                                    )
+                                )}
+                                <Divider />
+                            </div>
+                        </Drawer>
+                        <Toolbar />
+                    </Hidden>
+                    <Box display="flex">    
                         <Box p={8}>
                             <Toolbar />
                             <Grid container spacing={4}>
