@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef,useState, useContext, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -26,7 +26,9 @@ import { makeStyles, useTheme, createTheme, withStyles, ThemeProvider} from '@ma
 import { green, pink } from "@material-ui/core/colors";
 import { Grid } from "@material-ui/core";
 import CardActionArea from "@material-ui/core/CardActionArea";
-
+import Context from "./store/Context";
+import Cart from "./Cart";
+import Product from "./Product";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -134,7 +136,7 @@ function ResponsiveDrawer(props) {
 
     const loadGroupedItem = async (categories) => {
         var uri = "/listProdutos";
-        debugger;
+
         fetch(uri)
             .then((response) => response.json())
             .then((data) => {
@@ -241,7 +243,8 @@ function ResponsiveDrawer(props) {
             "https://www.instagram.com/confeitariadocesonho2106/"
         );
     };
-
+    const [isToggle, setToggle] = useState(false);
+    const context = useContext(Context);
 
   return (
     <div className={classes.root}>
@@ -269,6 +272,13 @@ function ResponsiveDrawer(props) {
                     title=""
                     className={classes.header_cart}
                 />
+                   {/* <Cart
+          isToggle={isToggle}
+          setToggle={setToggle}
+          carts={Context.carts}
+          removeProductFromCart={context.removeProductFromCart}
+          clearCart={Context.clearCart}
+        /> */}
             </Button>
         </Toolbar>
         <Grid className={classes.bottomMenu}>
