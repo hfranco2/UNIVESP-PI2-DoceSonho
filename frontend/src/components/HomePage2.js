@@ -1,4 +1,4 @@
-import React, {useRef,useState, useContext, useEffect} from 'react';
+import React, {useRef,useState, useContext, useEffect,Anchor} from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -29,8 +29,9 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import Context from "./store/Context";
 import Cart from "./Cart";
 import Product from "./Product";
-const drawerWidth = 240;
 
+const drawerWidth = 240;
+const { Link } = Anchor;
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
@@ -142,11 +143,7 @@ function ResponsiveDrawer(props) {
             .then((data) => {
                 let listGroupItem = [];
                 listGroupItem.push(
-                    {
-                        id: -1,
-                        description: "Todos",
-                        items: data,
-                    }
+                   
                 )
                 categories.forEach((item) => {
                     let produtosDaCategoria = data.filter(
@@ -163,17 +160,17 @@ function ResponsiveDrawer(props) {
                     }
                 });
                 setListCategoria(
-                    [
-                        {
-                            id: -1,
-                            description: "Todos",
-                        },
-                    ].concat(
+                  (
                         listGroupItem.map((item) => ({
                             id: item.id,
                             description: item.description,
                         }))
-                    )
+                    ).concat([
+                        {
+                            id: -1,
+                            description: "Todos",
+                        },
+                    ])
                 );
                 setListItem(
                     listGroupItem
@@ -206,12 +203,13 @@ function ResponsiveDrawer(props) {
         <Divider />
         {listCategoria.map(
                                     (item, index) => (
+                                        <Link href={`#${item.description}`}>
                                         <CardActionArea
                                             key={index}
-                                            onClick={() =>{
+                                            onClick={() =>
                                                 checked.indexOf(
                                                     item
-                                                ) !== -1; document.getElementById(item.description).href=`#${item.description}`;console.log(`#${item.description}`)}                                               
+                                                ) !== -1                                           
                                             }
                                         >
                                             <CardContent>
@@ -220,6 +218,7 @@ function ResponsiveDrawer(props) {
                                                 </Typography>
                                             </CardContent>
                                         </CardActionArea>
+                                        </Link>
                                     )
                                 )}
         
@@ -272,7 +271,7 @@ function ResponsiveDrawer(props) {
                     title=""
                     className={classes.header_cart}
                 />
-  
+            
             </Button>
         </Toolbar>
         <Grid className={classes.bottomMenu}>
