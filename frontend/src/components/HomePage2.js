@@ -208,10 +208,10 @@ function ResponsiveDrawer(props) {
                                     (item, index) => (
                                         <CardActionArea
                                             key={index}
-                                            onClick={() =>
+                                            onClick={() =>{
                                                 checked.indexOf(
                                                     item
-                                                ) !== -1
+                                                ) !== -1; document.getElementById(item.description).href=`#${item.description}`;console.log(`#${item.description}`)}                                               
                                             }
                                         >
                                             <CardContent>
@@ -272,13 +272,7 @@ function ResponsiveDrawer(props) {
                     title=""
                     className={classes.header_cart}
                 />
-                   {/* <Cart
-          isToggle={isToggle}
-          setToggle={setToggle}
-          carts={Context.carts}
-          removeProductFromCart={context.removeProductFromCart}
-          clearCart={Context.clearCart}
-        /> */}
+  
             </Button>
         </Toolbar>
         <Grid className={classes.bottomMenu}>
@@ -349,7 +343,7 @@ function ResponsiveDrawer(props) {
         <Toolbar />
         <Toolbar />
         { listItem.map((item,index) => ( 
-            <div>
+            <div id={item.description}>      
                 <Typography
                     variant='h5'
                     color='inherit'
@@ -385,7 +379,7 @@ function ResponsiveDrawer(props) {
                             </Card>
                         </Grid>
                     ))} 
-                </Grid>
+                </Grid>               
             </div>
         ))}
       </main>
