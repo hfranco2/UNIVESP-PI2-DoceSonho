@@ -10,12 +10,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Instagram from "@material-ui/icons/Instagram";
 import WhatsApp from "@material-ui/icons/WhatsApp";
 import Button from "@material-ui/core/Button";
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import CardMedia from "@material-ui/core/CardMedia";
@@ -24,8 +18,14 @@ import Typography from '@material-ui/core/Typography';
 import Card from "@material-ui/core/Card";
 import { makeStyles, useTheme, createTheme, withStyles, ThemeProvider} from '@material-ui/core/styles';
 import { green, pink } from "@material-ui/core/colors";
-import { Grid } from "@material-ui/core";
+import { DialogContentText, Grid } from "@material-ui/core";
 import CardActionArea from "@material-ui/core/CardActionArea";
+import Dialog from '@material-ui/core/Dialog';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import MuiDialogActions from '@material-ui/core/DialogActions';
+import CloseIcon from '@material-ui/icons/Close';
+import TextField from '@material-ui/core/TextField';
 
 const drawerWidth = 240;
 
@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     },
     bottomMenu: {
         background: "#ffffff",
-        height: "4.5em",
+        padding: '15px',
         width: "100vw",
         display: "flex",
         justifyContent: "center",
@@ -93,7 +93,89 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         padding: theme.spacing(3),
     },
+    dialogRoot: {
+        margin: 0,
+        padding: theme.spacing(2),
+    },
+    closeButton: {
+        position: 'absolute',
+        right: theme.spacing(1),
+        top: theme.spacing(1),
+        color: theme.palette.grey[500],
+    }
 }));
+
+const styles = (theme) => ({
+    root: {
+      margin: 0,
+      padding: theme.spacing(2),
+    },
+    closeButton: {
+      position: 'absolute',
+      right: theme.spacing(1),
+      top: theme.spacing(1),
+      color: theme.palette.grey[500],
+    },
+});
+
+const DialogTitle = withStyles(styles)((props) => {
+    const { children, classes, onClose, ...other } = props;
+    return (
+        <MuiDialogTitle disableTypography className={classes.dialogRoot} {...other}>
+            <Typography variant="h6">{children}</Typography>
+            {onClose ? (
+            <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
+                <CloseIcon />
+            </IconButton>
+            ) : null}
+        </MuiDialogTitle>
+    );
+});
+
+const handleChange = event => {
+    const result = event.target.value.replace(/\D/g, '');
+
+    setValue(result);
+  };
+
+const DialogContent = withStyles((theme) => ({
+    root: {
+        padding: theme.spacing(2),
+    },
+}))(MuiDialogContent);
+
+const DialogActions = withStyles((theme) => ({
+    root: {
+        margin: 0,
+        padding: theme.spacing(1),
+    },
+}))(MuiDialogActions);
+
+function NumberFormatCustom(props) {
+    const { inputRef, onChange, ...other } = props;
+  
+    return (
+      <NumberFormat
+        {...other}
+        getInputRef={inputRef}
+        onValueChange={(values) => {
+          onChange({
+            target: {
+              name: props.name,
+              value: values.value,
+            },
+          });
+        }}
+        isNumericString
+      />
+    );
+}
+
+NumberFormatCustom.propTypes = {
+    inputRef: PropTypes.func.isRequired,
+    name: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+};
 
 function ResponsiveDrawer(props) {
     React.useEffect(() => {
@@ -107,6 +189,12 @@ function ResponsiveDrawer(props) {
     const [listItem, setListItem] = React.useState([]);
     const [listCategoria, setListCategoria] = React.useState([]);
     const [checked, SetChecked] = React.useState([]);
+    const [open, setOpen] = React.useState(false);
+    const [clickedItem,setClickedItem] = React.useState(null);
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const InstagramColorButton = withStyles((theme) => ({
         root: {
@@ -131,7 +219,10 @@ function ResponsiveDrawer(props) {
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
-
+    const showItem = (item) => {
+        setOpen(true);
+        setClickedItem(item);
+    };
     const loadGroupedItem = async (categories) => {
         var uri = "/listProdutos";
         debugger;
@@ -154,25 +245,17 @@ function ResponsiveDrawer(props) {
                         listGroupItem.push({
                             id: item.id,
                             description: item.nomeCategoria,
-                            items: data.filter(
-                                (element) => element.categoria_id == item.id
-                            ),
+                            items: produtosDaCategoria,
                         });
                     }
                 });
                 setListCategoria(
-                    [
-                        {
-                            id: -1,
-                            description: "Todos",
-                        },
-                    ].concat(
-                        listGroupItem.map((item) => ({
-                            id: item.id,
-                            description: item.description,
-                        }))
-                    )
+                    listGroupItem.map((item) => ({
+                        id: item.id,
+                        description: item.description,
+                    }))
                 );
+                setClickedItem(listGroupItem[0].items[0]);
                 setListItem(
                     listGroupItem
                 );
@@ -245,6 +328,55 @@ function ResponsiveDrawer(props) {
 
   return (
     <div className={classes.root}>
+        { clickedItem != null &&
+            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
+           
+                     <img
+                        style={{ width: '100%', height: 'auto' }}
+                        src={"../static/" + clickedItem.foto}
+                        alt="image"
+                        />
+                <DialogContent dividers>
+                    <DialogContentText>
+                        <Typography gutterBottom variant="h5" component="h2">
+                            {clickedItem.titulo}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary" component="p">
+                            {clickedItem.descricao}
+                        </Typography>
+                    </DialogContentText>
+                
+                    {/* <Card className={classes.card}  >
+                        <CardActionArea onClick={() => onClose() }>
+                            <CardMedia
+                            component="img"
+                            alt={clickedItem.titulo}
+                            height="300"
+                            image={"../static/" + clickedItem.foto} 
+                            title={clickedItem.titulo}
+                            />
+                            <CardContent>
+                                <Typography gutterBottom variant="h5" component="h2">
+                                    {clickedItem.titulo}
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary" component="p">
+                                    {clickedItem.descricao}
+                                </Typography>
+                            </CardContent>
+                        </CardActionArea>
+                    </Card> */}
+                    
+                    <input
+                        onKeyPress={(event) => {
+                            if (!/[0-9]/.test(event.key)) {
+                            event.preventDefault();
+                            }
+                        }}
+                    />
+            
+                </DialogContent>
+            </Dialog>
+        }
       
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
@@ -279,7 +411,7 @@ function ResponsiveDrawer(props) {
                 alignItems="center"
                 spacing={2}
             >
-                <Grid item>
+                <Grid item  >
                     <InstagramColorButton
                         variant="outlined"
                         color="primary"
@@ -290,7 +422,7 @@ function ResponsiveDrawer(props) {
                     </InstagramColorButton>
                 </Grid>
                 <Grid item></Grid>
-                <Grid item>
+                <Grid item >
                     <WhatsAppColorButton
                         variant="outlined"
                         color="primary"
@@ -355,7 +487,7 @@ function ResponsiveDrawer(props) {
                         <Grid item key={item.id}>
             
                             <Card className={classes.card} >
-                                <CardActionArea onClick={() => showAlert(item.title) }>
+                                <CardActionArea onClick={() => showItem(item) }>
                                     <CardMedia
                                     component="img"
                                     alt={item.titulo}
