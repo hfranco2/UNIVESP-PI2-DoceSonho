@@ -10,7 +10,7 @@ export const Wrapper = styled.div`
 
 export const Icon = styled(FontAwesomeIcon)`
   padding: 5px;
-  font-size: 24px;
+  font-size: 40px;
   color: #ffffff;
 `;
 
@@ -18,11 +18,11 @@ export const CartCount = styled.span`
   position: absolute;
   bottom: -5px;
   right: -5px;
-  padding: 3px 7px;
+  padding: 1px 4px;
   border-radius: 50px;
   background: #f05454;
   color: #ffffff;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
 `;
 
@@ -38,7 +38,7 @@ export const CartSideBar = styled.div`
   height: 100%;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   transition: all ease-in-out 0.3s;
-
+color :black;
   &.expand {
     transition: all ease-in-out 0.3s;
     right: 0;
@@ -56,6 +56,7 @@ export const EmptyCart = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 24px;
+color :black;
 `;
 
 export const SideBarHeader = styled.div`

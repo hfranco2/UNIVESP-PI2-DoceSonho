@@ -36,14 +36,14 @@ export default function Cart({
   return (
     <>
       <Wrapper onClick={() => setToggle(true)}>
-        <Icon icon={faShoppingCart} />
+        <Icon icon={faShoppingCart} className='cartIcon'/>
         <CartCount>{carts.length}</CartCount>
       </Wrapper>
 
       <CartSideBar ref={$sideBarRef} className={isToggle ? "expand" : "shrink"}>
-        <SideBarHeader>shopping cart</SideBarHeader>
+        <SideBarHeader>Carrinho</SideBarHeader>
         {carts.length === 0 ? (
-          <EmptyCart>Empty Cart</EmptyCart>
+          <EmptyCart>Vazio</EmptyCart>
         ) : (
           carts.map(({ product, quantity }) => (
             <Card key={product.id}>

@@ -1,4 +1,5 @@
-import React, {useRef,useState, useContext, useEffect,Anchor} from 'react';
+import React, {useRef,useState, useContext, useEffect} from 'react';
+import { HashLink } from 'react-router-hash-link';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -29,9 +30,10 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import Context from "./store/Context";
 import Cart from "./Cart";
 import Product from "./Product";
-
+import GlobalStyles from "./GlobalStyles";
+import { NavBar, OverLay, MainContainer, ProductList } from "./AppStyles";
 const drawerWidth = 240;
-const { Link } = Anchor;
+
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
@@ -63,6 +65,7 @@ const useStyles = makeStyles((theme) => ({
     },
     card: {
         maxWidth: 350,
+        height:500
     },
     bottomMenu: {
         background: "#ffffff",
@@ -96,6 +99,11 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         padding: theme.spacing(3),
     },
+    catg:{
+        textDecoration:'none',
+        color:'#57160A'
+    }
+   
 }));
 
 function ResponsiveDrawer(props) {
@@ -143,7 +151,11 @@ function ResponsiveDrawer(props) {
             .then((data) => {
                 let listGroupItem = [];
                 listGroupItem.push(
-                   
+                    {
+                        id: -1,
+                        description: "Todos",
+                        items: data,
+                    }
                 )
                 categories.forEach((item) => {
                     let produtosDaCategoria = data.filter(
@@ -167,8 +179,7 @@ function ResponsiveDrawer(props) {
                         }))
                     ).concat([
                         {
-                            id: -1,
-                            description: "Todos",
+                            
                         },
                     ])
                 );
@@ -203,7 +214,10 @@ function ResponsiveDrawer(props) {
         <Divider />
         {listCategoria.map(
                                     (item, index) => (
-                                        <Link href={`#${item.description}`}>
+                                        <HashLink to={`#${item.description}`}                                       
+                                        activestyle={{ textDecoration:'underline'}}
+                                        className={classes.catg}
+                                        scroll={(el) => el.scrollIntoView({ behavior: 'smooth', block: 'end' })}>
                                         <CardActionArea
                                             key={index}
                                             onClick={() =>
@@ -218,7 +232,7 @@ function ResponsiveDrawer(props) {
                                                 </Typography>
                                             </CardContent>
                                         </CardActionArea>
-                                        </Link>
+                                        </HashLink>
                                     )
                                 )}
         
@@ -242,12 +256,13 @@ function ResponsiveDrawer(props) {
             "https://www.instagram.com/confeitariadocesonho2106/"
         );
     };
-    const [isToggle, setToggle] = useState(false);
-    const context = useContext(Context);
+      const [isToggle, setToggle] = useState(false);
+      const context = useContext(Context);
+
 
   return (
     <div className={classes.root}>
-      
+         
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
@@ -264,15 +279,16 @@ function ResponsiveDrawer(props) {
             </Typography>
             <div className={classes.space} />
             <Button color="inherit">
-                <CardMedia
-                    component="svg"
-                    alt=""
-                    image="../static/images/sacola.svg"
-                    title=""
-                    className={classes.header_cart}
-                />
-            
+              <Cart
+          isToggle={isToggle}
+          setToggle={setToggle}
+          carts={context.carts}
+          removeProductFromCart={context.removeProductFromCart}
+          clearCart={context.clearCart}
+        />
+          
             </Button>
+   
         </Toolbar>
         <Grid className={classes.bottomMenu}>
             <Grid
@@ -372,6 +388,9 @@ function ResponsiveDrawer(props) {
                                         </Typography>
                                         <Typography variant="body2" color="textSecondary" component="p">
                                             {item.descricao}
+                                        </Typography>
+                                        <Typography variant="body2" color="textSecondary" component="p">
+                                            {item.preco}
                                         </Typography>
                                     </CardContent>
                                 </CardActionArea>

@@ -23,7 +23,7 @@ export default class App extends Component {
             <Switch>
                 {/* <Route exact path="/" component={HomePage}/> */}
                 <Route exact path="/" component={HomePage2}/>
-                <Route  path="/cart/" component={Cart}/>
+                
             </Switch>
         </Router>
       </div>

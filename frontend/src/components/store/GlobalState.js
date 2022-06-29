@@ -68,3 +68,14 @@ export default function GlobalState(props) {
     </Context.Provider>
   );
 }
+const loadGroupedItem = async (categories) => {
+        var uri = "/listCart";
+
+        fetch(uri)
+            .then((response) => response.json())
+            .then((data) => {
+                let listItemsCart = [];
+               
+                
+            });
+    }
