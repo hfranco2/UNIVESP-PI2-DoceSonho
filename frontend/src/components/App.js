@@ -8,7 +8,6 @@ import {
   Redirect } from "react-router-dom"
 // import HomePage2 from "./HomePage2";
 import HomePage from "./HomePage";
-import Cart from "./Cart";
 
 
 export default class App extends Component {
@@ -22,9 +21,9 @@ export default class App extends Component {
       <div>
         <Router>
             <Switch>
-                <Route exact path="/" component={HomePage}/>
-                {/* <Route exact path="/" component={HomePage2}/> */}
-                <Route  path="/cart/" component={Cart}/>
+                <Route exact path="/" component={HomePage}/> 
+                 {/*<Route exact path="/" component={HomePage2}/>*/}
+                
             </Switch>
         </Router>
       </div>

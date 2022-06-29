@@ -1,4 +1,5 @@
-import React, {useRef} from 'react';
+import React, {useRef,useState, useContext, useEffect} from 'react';
+import { HashLink } from 'react-router-hash-link';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -26,7 +27,11 @@ import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import CloseIcon from '@material-ui/icons/Close';
 import TextField from '@material-ui/core/TextField';
-
+import Context from "./store/Context";
+import Cart from "./Cart";
+import Product from "./Product";
+import GlobalStyles from "./GlobalStyles";
+import { NavBar, OverLay, MainContainer, ProductList } from "./AppStyles";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -60,6 +65,7 @@ const useStyles = makeStyles((theme) => ({
     },
     card: {
         maxWidth: 350,
+        height:500
     },
     bottomMenu: {
         background: "#ffffff",
@@ -102,7 +108,12 @@ const useStyles = makeStyles((theme) => ({
         right: theme.spacing(1),
         top: theme.spacing(1),
         color: theme.palette.grey[500],
+    },
+    catg:{
+        textDecoration:'none',
+        color:'#57160A'
     }
+   
 }));
 
 const styles = (theme) => ({
@@ -225,7 +236,7 @@ function ResponsiveDrawer(props) {
     };
     const loadGroupedItem = async (categories) => {
         var uri = "/listProdutos";
-        debugger;
+
         fetch(uri)
             .then((response) => response.json())
             .then((data) => {
@@ -287,12 +298,16 @@ function ResponsiveDrawer(props) {
         <Divider />
         {listCategoria.map(
                                     (item, index) => (
+                                        <HashLink to={`#${item.description}`}                                       
+                                        activestyle={{ textDecoration:'underline'}}
+                                        className={classes.catg}
+                                        scroll={(el) => el.scrollIntoView({ behavior: 'smooth', block: 'end' })}>
                                         <CardActionArea
                                             key={index}
                                             onClick={() =>
                                                 checked.indexOf(
                                                     item
-                                                ) !== -1
+                                                ) !== -1                                           
                                             }
                                         >
                                             <CardContent>
@@ -301,6 +316,7 @@ function ResponsiveDrawer(props) {
                                                 </Typography>
                                             </CardContent>
                                         </CardActionArea>
+                                        </HashLink>
                                     )
                                 )}
         
@@ -324,6 +340,8 @@ function ResponsiveDrawer(props) {
             "https://www.instagram.com/confeitariadocesonho2106/"
         );
     };
+      const [isToggle, setToggle] = useState(false);
+      const context = useContext(Context);
 
 
   return (
@@ -394,14 +412,16 @@ function ResponsiveDrawer(props) {
             </Typography>
             <div className={classes.space} />
             <Button color="inherit">
-                <CardMedia
-                    component="svg"
-                    alt=""
-                    image="../static/images/sacola.svg"
-                    title=""
-                    className={classes.header_cart}
-                />
+              <Cart
+          isToggle={isToggle}
+          setToggle={setToggle}
+          carts={context.carts}
+          removeProductFromCart={context.removeProductFromCart}
+          clearCart={context.clearCart}
+        />
+          
             </Button>
+   
         </Toolbar>
         <Grid className={classes.bottomMenu}>
             <Grid
@@ -471,7 +491,7 @@ function ResponsiveDrawer(props) {
         <Toolbar />
         <Toolbar />
         { listItem.map((item,index) => ( 
-            <div>
+            <div id={item.description}>      
                 <Typography
                     variant='h5'
                     color='inherit'
@@ -502,12 +522,15 @@ function ResponsiveDrawer(props) {
                                         <Typography variant="body2" color="textSecondary" component="p">
                                             {item.descricao}
                                         </Typography>
+                                        <Typography variant="body2" color="textSecondary" component="p">
+                                            {item.preco}
+                                        </Typography>
                                     </CardContent>
                                 </CardActionArea>
                             </Card>
                         </Grid>
                     ))} 
-                </Grid>
+                </Grid>               
             </div>
         ))}
       </main>

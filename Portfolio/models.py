@@ -7,6 +7,7 @@ class Produtos(models.Model):
     titulo = models.CharField(max_length=200)
     descricao = models.TextField()
     ingredientes = models.TextField()
+    preco = models.FloatField()
     foto = models.ImageField(blank=True, upload_to='upload/')
     #foto = models.FileField(blank=True, upload_to='upload/')
 
