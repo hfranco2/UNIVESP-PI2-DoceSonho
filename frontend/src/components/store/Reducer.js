@@ -3,6 +3,7 @@ import { ADD_TO_CART, REMOVE_FROM_CART, CLEAR_ALL_FROM_CART } from "./types";
 
 const addProductToCart = (state, product) => {
   const copy = [...state.carts];
+console.log(copy)
   const curItemIndex = copy.findIndex((i) => i.product.id === product.id);
 
   if (curItemIndex < 0) {
@@ -52,3 +53,13 @@ export default (state, action) => {
       return state;
   }
 };
+(async () => {
+  const rawResponse = await fetch('https://httpbin.org/post', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({a: 1, b: 'Textual content'})
+  });
+  const content = await rawResponse.json();})

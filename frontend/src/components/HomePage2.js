@@ -233,6 +233,7 @@ function ResponsiveDrawer(props) {
     const showItem = (item) => {
         setOpen(true);
         setClickedItem(item);
+console.log(item)
     };
     const loadGroupedItem = async (categories) => {
         var uri = "/listProdutos";
@@ -355,43 +356,14 @@ function ResponsiveDrawer(props) {
                         alt="image"
                         />
                 <DialogContent dividers>
-                    <DialogContentText>
-                        <Typography gutterBottom variant="h5" component="h2">
-                            {clickedItem.titulo}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary" component="p">
-                            {clickedItem.descricao}
-                        </Typography>
-                    </DialogContentText>
-                
-                    {/* <Card className={classes.card}  >
-                        <CardActionArea onClick={() => onClose() }>
-                            <CardMedia
-                            component="img"
-                            alt={clickedItem.titulo}
-                            height="300"
-                            image={"../static/" + clickedItem.foto} 
-                            title={clickedItem.titulo}
-                            />
-                            <CardContent>
-                                <Typography gutterBottom variant="h5" component="h2">
-                                    {clickedItem.titulo}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary" component="p">
-                                    {clickedItem.descricao}
-                                </Typography>
-                            </CardContent>
-                        </CardActionArea>
-                    </Card> */}
-                    
-                    <input
-                        onKeyPress={(event) => {
-                            if (!/[0-9]/.test(event.key)) {
-                            event.preventDefault();
-                            }
-                        }}
-                    />
-            
+                <Product
+                key={clickedItem.ID}
+                id={clickedItem.ID}
+                imageURL={clickedItem.foto}
+                price={clickedItem.preco}
+                title={clickedItem.titulo}
+                addProductToCart={context.addProductToCart}
+                />
                 </DialogContent>
             </Dialog>
         }

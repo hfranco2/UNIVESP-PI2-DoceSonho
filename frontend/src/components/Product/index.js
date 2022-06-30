@@ -24,7 +24,7 @@ export default function Product({ addProductToCart, ...props }) {
       onMouseLeave={() => handleMouseLeave()}
     >
       {isHover && (
-        <OverlayWrapper onClick={() => addProductToCart({ ...props })}>
+        <OverlayWrapper onClick={() =>console.log(props)}>
           <Icon icon={faCartPlus} />
         </OverlayWrapper>
       )}
@@ -32,8 +32,8 @@ export default function Product({ addProductToCart, ...props }) {
       <Card>
         <CardImage src={props.imageURL} />
         <CardBody>
-          <CardTitle>{props.title}</CardTitle>
-          <CardPrice>${props.price}</CardPrice>
+          <CardTitle>{props.titulo}</CardTitle>
+          <CardPrice>${props.preco}</CardPrice>
         </CardBody>
       </Card>
     </Wrapper>
