@@ -1,5 +1,4 @@
 import React, {useRef} from 'react';
-import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
@@ -16,20 +15,21 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from '@material-ui/core/Typography';
 import Card from "@material-ui/core/Card";
-import { makeStyles, useTheme, createTheme, withStyles, ThemeProvider} from '@material-ui/core/styles';
-import { green, pink } from "@material-ui/core/colors";
-import { DialogContentText, Grid } from "@material-ui/core";
+import { makeStyles, useTheme, withStyles} from '@material-ui/core/styles';
+import { green, pink, purple } from "@material-ui/core/colors";
+import { CardActions, DialogContentText, Grid } from "@material-ui/core";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import CloseIcon from '@material-ui/icons/Close';
 import Paper from '@material-ui/core/Paper';
 import ShoppingCart from '@material-ui/icons/ShoppingCart';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const drawerWidth = 240;
 
+//Estilos
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
@@ -62,6 +62,10 @@ const useStyles = makeStyles((theme) => ({
     card: {
         maxWidth: 350,
     },
+    cartCardMedia: {
+        borderRadius: "30px",
+        margin: "5px"
+    },
     numberButton:{
         magin: "0px",       
         height: "100%",
@@ -87,6 +91,23 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+    },
+    dialogPaper: {
+        height: "100%",
+        maxHeight: "100%",
+        margin:"0px",
+        position:'absolute',
+        right:0,
+        bottom:0,
+        top:0
+    },
+    cartDialogParentDiv: {
+        color:"#F7D2DA",
+        backgroundColor:"#F7D2DA",
+    },
+    cartDialogHeaderDiv: {
+        padding: "48px",
+        backgroundColor:"#F7D2DA",
     },
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
@@ -125,111 +146,116 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const DialogContent = withStyles((theme) => ({
-    root: {
-        padding: theme.spacing(2),
-    },
-}))(MuiDialogContent);
 
-const DialogActions = withStyles((theme) => ({
-    root: {
-        margin: 0,
-        padding: theme.spacing(2),
-    },
-}))(MuiDialogActions);
+ const goToWhatsApp = () => {
+     goToAnotherUrl(
+         "https://api.whatsapp.com/send?phone=5511985935897&text=Estou%20contatando%20pelo%20site%20para%20saber%20mais%20sobre..."
+     );
+ };
 
-function NumberFormatCustom(props) {
-    const { inputRef, onChange, ...other } = props;
-  
-    return (
-      <NumberFormat
-        {...other}
-        getInputRef={inputRef}
-        onValueChange={(values) => {
-          onChange({
-            target: {
-              name: props.name,
-              value: values.value,
-            },
-          });
-        }}
-        isNumericString
-      />
-    );
-}
+ const goToInstagram = () => {
+     goToAnotherUrl(
+         "https://www.instagram.com/confeitariadocesonho2106/"
+     );
+ };
 
-NumberFormatCustom.propTypes = {
-    inputRef: PropTypes.func.isRequired,
-    name: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
+const goToAnotherUrl = (url) => {
+    window.open(url, "_blank").focus();
 };
 
+
 function ResponsiveDrawer(props) {
+    //função chamada no inicio do carregamentos da tela
     React.useEffect(() => {
         loadItemByCategory()
       }, []);
-    
-    const { windowProps } = props;
+
+    //propiedades que definem o estado do componente
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [listItem, setListItem] = React.useState([]);
     const [listCategoria, setListCategoria] = React.useState([]);
-    const [checked, SetChecked] = React.useState([]);
-    const [open, setOpen] = React.useState(false);
+    const [listCart, setListCart] = React.useState([]);
+    const [checked, SetChecked] = React.useState([]); //remover quando implementar filtro de listagem
+    const [itemDialogOpen, setItemDialogOpen] = React.useState(false);
     const [clickedItem,setClickedItem] = React.useState(null);
-
+    const [cartDialogOpen, setCartDialogOpen] = React.useState(false);
     const [cartQuantityToAdd, setCartQuantityToAdd] = React.useState(1);
-
+    
+    //funções
     const increaseCartQuantity = () => {
-        debugger;
         setCartQuantityToAdd(cartQuantityToAdd+1);
     };
-    
+
     const decreaseCartQuantity = () => {
-        debugger;
         if(cartQuantityToAdd <= 1) return;
         setCartQuantityToAdd(cartQuantityToAdd-1);
     };
 
     const handleChange = event => {
         const result = event.target.value.replace(/\D/g, '');
-    
+
         setCartQuantityToAdd(result);
     };
 
-    const handleClose = () => {
+    const itemDialogHandleClose = () => {
         setCartQuantityToAdd(1);
-        setOpen(false);
+        setItemDialogOpen(false);
     };
 
-    const InstagramColorButton = withStyles((theme) => ({
-        root: {
-            color: "#FFFFFF",
-            backgroundColor: "#E4405F",
-            "&:hover": {
-                backgroundColor: pink[300],
-            },
-        },
-    }))(Button);
+    const cartDialogHandleClose = () => {
+        setCartDialogOpen(false);
+    };
 
-    const WhatsAppColorButton = withStyles((theme) => ({
-        root: {
-            color: "#FFFFFF",
-            backgroundColor: "#25D366",
-            "&:hover": {
-                backgroundColor: green[300],
-            },
-        },
-    }))(Button);
+    const showCartDialog = () => {
+        setCartDialogOpen(true);
+    };
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
     const showItem = (item) => {
-        setOpen(true);
+        setItemDialogOpen(true);
         setClickedItem(item);
     };
+
+    const buyRedirectToWhatsApp = () => {
+
+        let pedidos = listCart.map((item, index) => 
+            (` *${item.item.titulo}* x ${item.quantity} - valor: _R$ ${item.quantity * item.item.preco}_ `)
+        )
+        .join()
+
+        let text = `Olá, estou entrando em contato pelo site. Gostaria de fazer os seguintes pedidos: ${pedidos}.
+                    Aguardo contato para combinar método de pagamento e datas disponíveis.`
+        
+        goToAnotherUrl(
+            `https://api.whatsapp.com/send?phone=5511985935897&text=${text}`
+        );
+    };
+
+    const setCartFromResult = async (data,items) => {
+        let dictionaryWithCartItems = data[1] 
+        let mappedCartItems = []
+
+        for (let key in dictionaryWithCartItems) 
+        { 
+            mappedCartItems.push({"id":key,"quantity":data[1][key].quantity,"item":items.find(element => element.ID == key)}) 
+        }
+
+        setListCart(mappedCartItems)
+    };
+
+    const loadCart = async (items) => {
+        var uri = "/listCart";
+        fetch(uri)
+            .then((response) => response.json())
+            .then((data) => {
+                setCartFromResult(data,items)
+            })
+    };
+
     const loadGroupedItem = async (categories) => {
         var uri = "/listProdutos";
         debugger;
@@ -266,6 +292,7 @@ function ResponsiveDrawer(props) {
                 setListItem(
                     listGroupItem
                 );
+                loadCart(data);
                 
             });
     }
@@ -277,6 +304,60 @@ function ResponsiveDrawer(props) {
                 loadGroupedItem(data);
             });
     }
+
+    const addToCart = (item,itemsList) => {
+
+        fetch(`/listCart/add/${item.ID}qtd${cartQuantityToAdd}`)
+            .then(response => response.json())
+            .then(data => {
+                setCartFromResult(data,itemsList)
+                setCartQuantityToAdd(1)
+                setItemDialogOpen(false)
+            });
+
+    };
+
+    const removeFromCart = (item,itemsList) => {
+        fetch(`/listCart/remove/${item.ID}`)
+        .then(response => response.json())
+        .then(data => {
+            setCartFromResult(data,itemsList)
+            setCartQuantityToAdd(1)
+        });
+    };
+
+   
+    
+    //function components para serem usados internamente no componente
+    const InstagramColorButton = withStyles((theme) => ({
+        root: {
+            color: "#FFFFFF",
+            backgroundColor: "#E4405F",
+            "&:hover": {
+                backgroundColor: pink[300],
+            },
+        },
+    }))(Button);
+
+    const WhatsAppColorButton = withStyles((theme) => ({
+        root: {
+            color: "#FFFFFF",
+            backgroundColor: "#25D366",
+            "&:hover": {
+                backgroundColor: green[300],
+            },
+        },
+    }))(Button);
+
+    const ColorButton = withStyles((theme) => ({
+        root: {
+          color: theme.palette.getContrastText(purple[500]),
+          backgroundColor: purple[500],
+          '&:hover': {
+            backgroundColor: purple[700],
+          },
+        },
+      }))(Button);
 
   const drawer = (
     <div>
@@ -314,31 +395,25 @@ function ResponsiveDrawer(props) {
     </div>
   );
 
-  const container = windowProps !== undefined ? () => windowProps().document.body : undefined;
+  
+    const DialogContent = withStyles((theme) => ({
+        root: {
+            padding: theme.spacing(2),
+        },
+    }))(MuiDialogContent);
 
-    const goToAnotherUrl = (url) => {
-       window.open(url, "_blank").focus();
-    };
-
-    const goToWhatsApp = () => {
-        goToAnotherUrl(
-            "https://api.whatsapp.com/send?phone=5511985935897&text=Estou%20contatando%20pelo%20site%20para%20saber%20mais%20sobre..."
-        );
-    };
-
-    const goToInstagram = () => {
-        goToAnotherUrl(
-            "https://www.instagram.com/confeitariadocesonho2106/"
-        );
-    };
-
-    
+    const DialogActions = withStyles((theme) => ({
+        root: {
+            margin: 0,
+            padding: theme.spacing(2),
+        },
+    }))(MuiDialogActions);
 
 
   return (
     <div className={classes.root}>
         { clickedItem != null &&
-            <Dialog onClose={handleClose}  open={open}>
+            <Dialog onClose={itemDialogHandleClose}  open={itemDialogOpen}>
            
                      <img
                         style={{ width: '100%', height: 'auto' }}
@@ -354,17 +429,11 @@ function ResponsiveDrawer(props) {
                             {clickedItem.descricao}
                         </Typography>
                 </DialogContent>
-                
-                
-                
-
-
-
                 <DialogActions>
                     <Grid container direction="row" justifyContent="flex-start" >
                         <Grid item xs={6} sm={3}>
                             <Typography gutterBottom variant="h5" component="h2">
-                                R$ 80,00
+                                R$ {clickedItem.preco}
                             </Typography>
                         </Grid>
                         <Grid container item xs={12} sm={9}  
@@ -404,6 +473,7 @@ function ResponsiveDrawer(props) {
                                         variant="outlined"
                                         color="primary"
                                         size="small"
+                                        onClick={() => addToCart(clickedItem,listItem[0].items)}
                                         startIcon={<ShoppingCart />}>
                                         Comprar
                                     </Button>
@@ -414,34 +484,94 @@ function ResponsiveDrawer(props) {
                         </Grid>
                         
                     </Grid>
-                {/* <Paper elevation={3}
-                 >
-                     <div className={classes.container}>
-{/* className={classes.numberButton} 
-                        <div >
-                            <Button variant="outlined"  >-</Button>
-                        </div>
-                        <div >
-                            <TextField id="outlined-basic" label="Outlined" variant="outlined"  />
-                        </div>
-                        <div >
-                            <Button variant="outlined"  >+</Button>
-                        </div>
-                             <Grid item xs={4}>
-                          
-                                
-                            </Grid>
-                            <Grid item xs={4}>
-                                
-                            </Grid>
-                            <Grid item xs={4}>
-                                
-                            </Grid> 
-                     </div>
-                    </Paper> */}
                 </DialogActions>
             </Dialog>
         }
+
+    <Dialog onClose={cartDialogHandleClose}  open={cartDialogOpen} classes={{ paper: classes.dialogPaper }}>
+        {listCart != null &&
+            <div >
+                {/* Carrinho - Header */}
+                <div  className={classes.cartDialogHeaderDiv}>
+                    <Grid container direction="row" alignItems="center">
+                        <Grid item>
+                            <Typography variant="h4" component="h2">
+                            Carrinho ({listCart.length})                            
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                        <IconButton
+                            color="inherit"
+                            aria-label="close cart"
+                            edge="start"
+                            onClick={cartDialogHandleClose}
+                            style={{margin: theme.spacing(1),}}
+                           >
+                            <CloseIcon fontSize="large" />
+                        </IconButton>
+                        </Grid>
+                        
+                    </Grid>
+                    
+                </div>
+                {/* Carrinho - Items */}
+                <div style={{padding:"5px"}}>
+                    <Grid container spacing={1} direction="column" >
+                    { listCart.map((cart,index) => (
+                            <Grid item key={index}>
+                
+                                <Card className={classes.card} elevation={5}>
+                                    <Grid container direction="row" alignItems='center'>
+                                        <Grid item xs={8} sm={4}>
+                                            <CardMedia
+                                            component="img"
+                                            alt={cart.item.titulo}
+                                            height="150"
+                                            image={"../static/" + cart.item.foto} 
+                                            title={cart.item.titulo}
+                                            className={classes.cartCardMedia} 
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={6}>
+                                            <CardContent>
+                                                <Typography gutterBottom variant="h5" component="h2">
+                                                    {cart.item.titulo}
+                                                </Typography>
+                                                <Typography variant="body2" color="textSecondary" component="p">
+                                                    {cart.item.descricao}
+                                                </Typography>
+                                            </CardContent>
+                                            
+                                        </Grid>
+                                    </Grid>
+                                    <CardActions>
+                                        <IconButton
+                                                color="inherit"
+                                                aria-label="close cart"
+                                                edge="start"
+                                                style={{margin: theme.spacing(1),
+                                                float: "left" }}
+                                                onClick={() => removeFromCart(cart.item,listItem[0].items)}
+                                            >
+                                                <DeleteIcon fontSize="medium" />
+                                            </IconButton>
+                                    </CardActions>
+                                    
+                                </Card>
+                            </Grid>
+                        ))} 
+                    </Grid>
+                </div>
+                {/* Carrinho - Botão */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center"}}>
+                    <ColorButton variant="contained" color="primary" onClick={buyRedirectToWhatsApp} style={{borderRadius: "30px", width: "80%"}}>
+                        Continuar
+                    </ColorButton>
+                </div>
+                
+            </div>
+        }
+    </Dialog>
       
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
@@ -464,6 +594,7 @@ function ResponsiveDrawer(props) {
                     alt=""
                     image="../static/images/sacola.svg"
                     title=""
+                    onClick={showCartDialog}
                     className={classes.header_cart}
                 />
             </Button>
@@ -503,8 +634,9 @@ function ResponsiveDrawer(props) {
       <nav className={classes.drawer} aria-label="mailbox folders">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Hidden smUp implementation="css">
+        {/* container={container} */}
           <Drawer
-            container={container}
+          
             variant="temporary"
             anchor={theme.direction === 'rtl' ? 'right' : 'left'}
             open={mobileOpen}
@@ -581,8 +713,6 @@ function ResponsiveDrawer(props) {
 }
 
 ResponsiveDrawer.propTypes = {
-  //TODO(remove windowProps)
-   windowProps: PropTypes.func,
 };
 
 export default ResponsiveDrawer;

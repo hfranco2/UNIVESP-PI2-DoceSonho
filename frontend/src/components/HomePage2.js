@@ -129,26 +129,6 @@ const styles = (theme) => ({
     },
 });
 
-const DialogTitle = withStyles(styles)((props) => {
-    const { children, classes, onClose, ...other } = props;
-    return (
-        <MuiDialogTitle disableTypography className={classes.dialogRoot} {...other}>
-            <Typography variant="h6">{children}</Typography>
-            {onClose ? (
-            <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
-                <CloseIcon />
-            </IconButton>
-            ) : null}
-        </MuiDialogTitle>
-    );
-});
-
-const handleChange = event => {
-    const result = event.target.value.replace(/\D/g, '');
-
-    setValue(result);
-  };
-
 const DialogContent = withStyles((theme) => ({
     root: {
         padding: theme.spacing(2),
