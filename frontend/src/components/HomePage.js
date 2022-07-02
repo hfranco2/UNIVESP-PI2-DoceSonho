@@ -25,7 +25,8 @@ import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import CloseIcon from '@material-ui/icons/Close';
-import TextField from '@material-ui/core/TextField';
+import Paper from '@material-ui/core/Paper';
+import ShoppingCart from '@material-ui/icons/ShoppingCart';
 
 const drawerWidth = 240;
 
@@ -60,6 +61,24 @@ const useStyles = makeStyles((theme) => ({
     },
     card: {
         maxWidth: 350,
+    },
+    numberButton:{
+        magin: "0px",       
+        height: "100%",
+        width: "100%",
+        borderRadius: "0"
+    },
+    numberButtonParent:{
+        width:"200px"
+    },
+    numberGridContainer: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(12, 1fr)',
+        gridGap: theme.spacing(0),
+        width: "200px"
+    },
+    bottomItemDialogGrid: {
+
     },
     bottomMenu: {
         background: "#ffffff",
@@ -105,38 +124,6 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const styles = (theme) => ({
-    root: {
-      margin: 0,
-      padding: theme.spacing(2),
-    },
-    closeButton: {
-      position: 'absolute',
-      right: theme.spacing(1),
-      top: theme.spacing(1),
-      color: theme.palette.grey[500],
-    },
-});
-
-const DialogTitle = withStyles(styles)((props) => {
-    const { children, classes, onClose, ...other } = props;
-    return (
-        <MuiDialogTitle disableTypography className={classes.dialogRoot} {...other}>
-            <Typography variant="h6">{children}</Typography>
-            {onClose ? (
-            <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
-                <CloseIcon />
-            </IconButton>
-            ) : null}
-        </MuiDialogTitle>
-    );
-});
-
-const handleChange = event => {
-    const result = event.target.value.replace(/\D/g, '');
-
-    setValue(result);
-  };
 
 const DialogContent = withStyles((theme) => ({
     root: {
@@ -147,7 +134,7 @@ const DialogContent = withStyles((theme) => ({
 const DialogActions = withStyles((theme) => ({
     root: {
         margin: 0,
-        padding: theme.spacing(1),
+        padding: theme.spacing(2),
     },
 }))(MuiDialogActions);
 
@@ -192,7 +179,27 @@ function ResponsiveDrawer(props) {
     const [open, setOpen] = React.useState(false);
     const [clickedItem,setClickedItem] = React.useState(null);
 
+    const [cartQuantityToAdd, setCartQuantityToAdd] = React.useState(1);
+
+    const increaseCartQuantity = () => {
+        debugger;
+        setCartQuantityToAdd(cartQuantityToAdd+1);
+    };
+    
+    const decreaseCartQuantity = () => {
+        debugger;
+        if(cartQuantityToAdd <= 1) return;
+        setCartQuantityToAdd(cartQuantityToAdd-1);
+    };
+
+    const handleChange = event => {
+        const result = event.target.value.replace(/\D/g, '');
+    
+        setCartQuantityToAdd(result);
+    };
+
     const handleClose = () => {
+        setCartQuantityToAdd(1);
         setOpen(false);
     };
 
@@ -325,56 +332,114 @@ function ResponsiveDrawer(props) {
         );
     };
 
+    
+
 
   return (
     <div className={classes.root}>
         { clickedItem != null &&
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
+            <Dialog onClose={handleClose}  open={open}>
            
                      <img
                         style={{ width: '100%', height: 'auto' }}
                         src={"../static/" + clickedItem.foto}
                         alt="image"
                         />
-                <DialogContent dividers>
-                    <DialogContentText>
+                <DialogContent >
+                    
                         <Typography gutterBottom variant="h5" component="h2">
                             {clickedItem.titulo}
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p">
                             {clickedItem.descricao}
                         </Typography>
-                    </DialogContentText>
-                
-                    {/* <Card className={classes.card}  >
-                        <CardActionArea onClick={() => onClose() }>
-                            <CardMedia
-                            component="img"
-                            alt={clickedItem.titulo}
-                            height="300"
-                            image={"../static/" + clickedItem.foto} 
-                            title={clickedItem.titulo}
-                            />
-                            <CardContent>
-                                <Typography gutterBottom variant="h5" component="h2">
-                                    {clickedItem.titulo}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary" component="p">
-                                    {clickedItem.descricao}
-                                </Typography>
-                            </CardContent>
-                        </CardActionArea>
-                    </Card> */}
-                    
-                    <input
-                        onKeyPress={(event) => {
-                            if (!/[0-9]/.test(event.key)) {
-                            event.preventDefault();
-                            }
-                        }}
-                    />
-            
                 </DialogContent>
+                
+                
+                
+
+
+
+                <DialogActions>
+                    <Grid container direction="row" justifyContent="flex-start" >
+                        <Grid item xs={6} sm={3}>
+                            <Typography gutterBottom variant="h5" component="h2">
+                                R$ 80,00
+                            </Typography>
+                        </Grid>
+                        <Grid container item xs={12} sm={9}  
+                            direction="row" 
+                            alignItems='center' 
+                            justifyContent="flex-end"
+                            spacing={3}>
+                                <Grid item xs={12} sm={6} >
+                                    <Paper elevation={3} className={classes.numberButtonParent} >
+                                        <div className={classes.numberGridContainer}>
+                                            <div style={{ gridColumnEnd: 'span 4' }}>
+                                                <Button 
+                                                    variant="outlined" 
+                                                    className={classes.numberButton}
+                                                    onClick={() => decreaseCartQuantity()} >-</Button>
+                                            </div>
+                                            <div style={{ gridColumnEnd: 'span 4' }}>
+                                                <input
+                                                    style={{textAlign: "center"}} 
+                                                    type="text" 
+                                                    className={classes.numberButton}  
+                                                    value={cartQuantityToAdd}
+                                                    onChange={handleChange}/>
+                                            </div>
+                                            <div style={{ gridColumnEnd: 'span 4' }}>
+                                                <Button 
+                                                    variant="outlined" 
+                                                    className={classes.numberButton}  
+                                                    onClick={() => increaseCartQuantity()}>+</Button>
+                                            </div>
+                                        </div>
+                                    </Paper>    
+                                </Grid>
+                                <Grid item xs={12} sm={6} >
+                                    <Button
+                                        style={{magin:"3px"}}
+                                        variant="outlined"
+                                        color="primary"
+                                        size="small"
+                                        startIcon={<ShoppingCart />}>
+                                        Comprar
+                                    </Button>
+                                </Grid>
+                            
+                            
+                            
+                        </Grid>
+                        
+                    </Grid>
+                {/* <Paper elevation={3}
+                 >
+                     <div className={classes.container}>
+{/* className={classes.numberButton} 
+                        <div >
+                            <Button variant="outlined"  >-</Button>
+                        </div>
+                        <div >
+                            <TextField id="outlined-basic" label="Outlined" variant="outlined"  />
+                        </div>
+                        <div >
+                            <Button variant="outlined"  >+</Button>
+                        </div>
+                             <Grid item xs={4}>
+                          
+                                
+                            </Grid>
+                            <Grid item xs={4}>
+                                
+                            </Grid>
+                            <Grid item xs={4}>
+                                
+                            </Grid> 
+                     </div>
+                    </Paper> */}
+                </DialogActions>
             </Dialog>
         }
       
